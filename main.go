@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -71,6 +72,24 @@ func main() {
 			logrus.WithError(err).Fatal("failed to execute template")
 		}
 	}
+
+	for _, remote := range data.Checks {
+		cmd := exec.Command("go", "get", remote)
+
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		err = cmd.Run()
+		if err != nil {
+			logrus.WithError(err).Fatalf("failed to get remote: \"%s\"", remote)
+		}
+	}
+
+	err = exec.Command("go", "mod", "tidy").Run()
+	if err != nil {
+		logrus.WithError(err).Fatal("failed to tidy go modules")
+	}
+
 }
 
 func cleanChecksDir(path string, info os.FileInfo, err error) error {

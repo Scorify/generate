@@ -48,7 +48,7 @@ func main() {
 	for name, remote := range data.Checks {
 		var cleanRemote string
 		if strings.Contains(remote, "@") {
-			cleanRemote = strings.Split(remote, "@")[1]
+			cleanRemote = strings.Split(remote, "@")[0]
 		} else {
 			cleanRemote = remote
 		}

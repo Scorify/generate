@@ -4,12 +4,20 @@
 package checks
 
 import (
+	"github.com/scorify/schema"
+
 	{{ .Name }} "{{ .CleanRemote }}"
 )
 
 func init() {
+	schema, err := schema.Describe({{ .Name }}.Schema{})
+	if err != nil {
+		panic(err)
+	}
+
 	Checks["{{ .Name }}"] = Check{
-		Func:   {{ .Name }}.Run,
-		Schema: ConvertSchema({{ .Name }}.Schema{}),
+		Func:     {{ .Name }}.Run,
+		Validate: {{ .Name }}.Validate,
+		Schema:   schema,
 	}
 }
